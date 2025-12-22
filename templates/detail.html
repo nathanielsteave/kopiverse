@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ info.nama }} - Detail Knowledge</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f6f8;
+            color: #2d3748;
+        }
+
+        /* Header Area */
+        .detail-header {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            border-bottom: 5px solid #4fd1c5;
+        }
+
+        /* Kartu Informasi */
+        .info-card {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .card-header-custom {
+            background-color: #fff;
+            padding: 20px;
+            border-bottom: 1px solid #edf2f7;
+            font-weight: 700;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+        }
+        .icon-header { margin-right: 10px; font-size: 1.2rem; }
+
+        /* Styles untuk Data Points */
+        .data-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #a0aec0;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .data-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        /* Badges & Pills */
+        .flavor-badge {
+            background-color: #fffaf0;
+            color: #d69e2e;
+            border: 1px solid #fbd38d;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-right: 5px; margin-bottom: 5px;
+            display: inline-block;
+        }
+        .ingredient-pill {
+            background-color: #e6fffa;
+            color: #2c7a7b;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 5px; margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        /* Traceability Line CSS */
+        .trace-line {
+            border-left: 2px dashed #cbd5e0;
+            margin-left: 15px;
+            padding-left: 25px;
+            padding-bottom: 20px;
+            position: relative;
+        }
+        .trace-line::before {
+            content: '';
+            width: 12px; height: 12px;
+            background: #cbd5e0;
+            border-radius: 50%;
+            position: absolute;
+            left: -7px; top: 0;
+        }
+        .trace-line:last-child { border-left: none; }
+        .trace-line:last-child::before { background: #4fd1c5; }
+    </style>
+</head>
+<body>
+
+<div class="detail-header">
+    <div class="container">
+        <a href="javascript:history.back()" class="btn btn-outline-light btn-sm mb-3">&larr; Kembali</a>
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold mb-2">{{ info.nama }}</h1>
+                <p class="lead mb-0 opacity-75">{{ info.description }}</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="bg-white text-dark rounded-3 p-3 d-inline-block shadow-sm">
+                    <div class="small text-muted text-uppercase fw-bold">Penilaian / Harga</div>
+                    <div class="d-flex align-items-end justify-content-end gap-3">
+                        <div class="text-end">
+                            <div class="fs-4 fw-bold text-success">{{ info.skor }}</div>
+                            <div class="small text-muted">Score</div>
+                        </div>
+                        <div class="border-start ps-3 text-end">
+                            <div class="fs-4 fw-bold">{{ info.harga }}</div>
+                            <div class="small text-muted">IDR</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row">
+
+        <div class="col-lg-4">
+            
+            <div class="info-card">
+                <div class="card-header-custom">
+                    <span class="icon-header">📋</span> Informasi Umum
+                </div>
+                <div class="p-4">
+                    {% if info.shop != '-' %}
+                    <div class="mb-3">
+                        <div class="data-label">Disajikan Oleh</div>
+                        <div class="data-value">{{ info.shop }}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if info.badges %}
+                    <div class="mb-3">
+                        <div class="data-label">Flavor Notes</div>
+                        <div class="mt-2">
+                            {% for flavor in info.badges %}
+                                <span class="flavor-badge">{{ flavor }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if info.specs.temp != '-' or info.moisture != '-' %}
+            <div class="info-card">
+                <div class="card-header-custom">
+                    <span class="icon-header">⚙️</span> Data Teknis
+                </div>
+                <div class="p-4">
+                    {% if info.specs.temp != '-' %}
+                    <div class="row mb-2">
+                        <div class="col-6 mb-3">
+                            <div class="data-label">Suhu Air</div>
+                            <div class="data-value">{{ info.specs.temp }}°C</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="data-label">Waktu</div>
+                            <div class="data-value">{{ info.specs.time }}</div>
+                        </div>
+                        <div class="col-12">
+                            <div class="data-label">Rasio Seduh</div>
+                            <div class="data-value">{{ info.specs.ratio }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if info.moisture != '-' %}
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="data-label">Moisture</div>
+                            <div class="data-value">{{ info.moisture }}%</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="data-label">Density</div>
+                            <div class="data-value">{{ info.density }}</div>
+                        </div>
+                        <div class="col-12">
+                            <div class="data-label">Roast Profile</div>
+                            <div class="data-value text-danger">{{ info.roast_profile }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-8">
+
+            {% if info.ingredients %}
+            <div class="info-card">
+                <div class="card-header-custom text-primary">
+                    <span class="icon-header">🧪</span> Komposisi & Resep
+                </div>
+                <div class="p-4">
+                    <div class="mb-4">
+                        <div class="data-label mb-2">Bahan-bahan (Ingredients)</div>
+                        {% for ing in info.ingredients %}
+                            <span class="ingredient-pill">{{ ing }}</span>
+                        {% endfor %}
+                    </div>
+
+                    {% if info.base_coffee != '-' %}
+                    <div class="alert alert-info border-0 d-flex align-items-center">
+                        <span class="fs-2 me-3">☕</span>
+                        <div>
+                            <div class="small text-uppercase fw-bold opacity-75">Menggunakan Biji Kopi Base</div>
+                            <div class="fw-bold fs-5">{{ info.base_coffee }}</div>
+                            <small>Data biji kopi ini ditarik dari relasi <code>:brewedFrom</code></small>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="info-card">
+                <div class="card-header-custom text-dark">
+                    <span class="icon-header">🕸️</span> Visualisasi Graph
+                </div>
+                <div class="p-4 text-center">
+                    <div class="mermaid">
+                        graph LR
+                        %% Node Definitions
+                        Produk("☕ {{ info.nama }}")
+                        
+                        %% Traceability Logic
+                        {% if info.base_coffee != '-' %}
+                            Base(["🌱 {{ info.base_coffee }}"]) --> Produk
+                            {% if info.process != '-' %}
+                                Proses("⚙️ {{ info.process }}") --> Base
+                            {% endif %}
+                            {% if info.farm != '-' %}
+                                Farm("👨‍🌾 {{ info.farm }}") --> Base
+                                {% if info.origin != '-' %}
+                                    Origin("🌍 {{ info.origin }}") --> Farm
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                        %% Styling
+                        classDef default fill:#fff,stroke:#333,stroke-width:2px;
+                        classDef finish fill:#d1fae5,stroke:#059669;
+                        class Produk finish;
+                    </div>
+                    <small class="text-muted fst-italic mt-2 d-block">Diagram digenerate otomatis dari relasi Ontology</small>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="card-header-custom text-success">
+                    <span class="icon-header">🌍</span> Jejak Asal-Usul (Text Detail)
+                </div>
+                <div class="p-4">
+                    <p class="text-muted small mb-4">
+                        Data berikut diambil dengan menelusuri graph ontologi secara mundur (Reverse Graph Traversal).
+                    </p>
+
+                    <div class="ps-2">
+                        {% if info.origin != '-' %}
+                        <div class="trace-line">
+                            <div class="data-label">Region / Origin</div>
+                            <div class="fw-bold text-dark fs-5">{{ info.origin }}</div>
+                        </div>
+                        {% endif %}
+
+                        {% if info.farm != '-' %}
+                        <div class="trace-line">
+                            <div class="data-label">Diproduksi Oleh (Farm/Coop)</div>
+                            <div class="fw-bold text-dark fs-5">{{ info.farm }}</div>
+                            {% if info.altitude != '-' %}
+                                <span class="badge bg-secondary mt-1">Alt: {{ info.altitude }} mdpl</span>
+                            {% endif %}
+                            {% if info.harvest != '-' %}
+                                <span class="badge bg-success mt-1">Panen: {{ info.harvest }}</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if info.process != '-' %}
+                        <div class="trace-line">
+                            <div class="data-label">Metode Pasca Panen</div>
+                            <div class="fw-bold text-dark fs-5">{{ info.process }}</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="trace-line">
+                            <div class="data-label">Produk Akhir</div>
+                            <div class="fw-bold text-success fs-5">{{ info.nama }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* --- TEMA WARNA DINAMIS --- */
+        .role-petani { --theme: #059669; --bg-theme: #ecfdf5; --border-theme: #a7f3d0; }
+        .role-roaster { --theme: #dc2626; --bg-theme: #fef2f2; --border-theme: #fecaca; }
+        .role-barista { --theme: #0891b2; --bg-theme: #ecfeff; --border-theme: #a5f3fc; }
+
+        /* Navbar */
+        .navbar-custom {
+            background-color: #111827;
+            border-bottom: 4px solid var(--theme);
+        }
+
+        /* Search Wrapper */
+        .search-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        /* KARTU UTAMA */
+        .card-custom {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: var(--theme);
+        }
+
+        /* Header Kartu */
+        .card-header-styled {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .price-badge {
+            float: right;
+            background-color: var(--bg-theme);
+            color: var(--theme);
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-left: 10px;
+        }
+
+        .item-title {
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: #111827;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .item-subtitle {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Body Kartu */
+        .card-body-styled {
+            padding: 15px 20px 20px 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Flavor Badges */
+        .flavor-badge {
+            display: inline-block;
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-right: 4px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        /* --- ROASTER PROFESSIONAL GRID SYSTEM --- */
+        .qc-section-title {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+            padding-bottom: 2px;
+        }
+        
+        /* Box Pink: Analisis Green Bean */
+        .qc-box {
+            background-color: #fff1f2;
+            border: 1px solid #fecdd3;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+        .qc-box .qc-section-title { color: #9f1239; border-color: #fecdd3; }
+
+        /* Box Orange: Roast Profiling */
+        .roast-box {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+        .roast-box .qc-section-title { color: #9a3412; border-color: #fed7aa; }
+
+        /* Box Blue/Gray: Sensory & Ops */
+        .ops-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+        .lbl { color: #64748b; font-weight: 600; }
+        .val { color: #0f172a; font-weight: 800; float: right; }
+        
+        /* Indikator Warna Nilai */
+        .val-danger { color: #dc2626; }
+        .val-safe { color: #059669; }
+
+        /* --- BARISTA TECH GRID --- */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: #ecfeff;
+            border: 1px solid #cffafe;
+            border-radius: 8px;
+            padding: 8px 0;
+            margin-top: 10px;
+        }
+        .tech-item { text-align: center; border-right: 1px solid #cffafe; }
+        .tech-item:last-child { border-right: none; }
+        .tech-val { font-weight: 800; font-size: 0.9rem; color: #0e7490; }
+        .tech-lbl { font-size: 0.65rem; text-transform: uppercase; color: #155e75; }
+
+        /* Tombol Detail */
+        .btn-detail {
+            width: 100%;
+            margin-top: auto;
+            padding: 10px;
+            background: white;
+            border: 2px solid var(--theme);
+            color: var(--theme);
+            font-weight: 700;
+            border-radius: 10px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .btn-detail:hover {
+            background: var(--theme);
+            color: white;
+        }
+    </style>
+</head>
+<body class="role-{{ role }}">
+
+<nav class="navbar navbar-dark navbar-custom mb-4 shadow-sm">
+    <div class="container">
+        <div class="d-flex align-items-center">
+            <a href="/" class="btn btn-outline-light btn-sm me-3 fw-bold border-2">&larr; MENU</a>
+            <span class="navbar-brand mb-0 h1 fw-bold">{{ title }}</span>
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+
+    {% if role == 'barista' %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <div class="search-wrapper text-center p-3">
+                <form action="/role/barista" method="get" class="d-flex gap-2">
+                    <input type="text" name="q" class="form-control" placeholder="Cari resep, bahan, rasa..." value="{{ search_query }}">
+                    <button type="submit" class="btn btn-info text-white fw-bold">Cari</button>
+                </form>
+                {% if search_query %}
+                    <a href="/role/barista" class="text-danger small fw-bold mt-2 d-inline-block text-decoration-none">Reset Filter</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+        {% for item in data %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card-custom">
+                
+                <div class="card-header-styled">
+                    <span class="price-badge">{{ item.price }}</span>
+                    
+                    <h4 class="item-title">{{ item.title }}</h4>
+                    
+                    <div class="item-subtitle">
+                        {% if role == 'roaster' %}
+                            📍 {{ item.origin }}
+                        {% elif role == 'petani' %}
+                            {{ item.detail_1 }} {% else %}
+                            Served by {{ item.shop }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card-body-styled">
+                    
+                    {% if item.badges %}
+                    <div class="mb-2">
+                        {% for flavor in item.badges %}
+                            <span class="flavor-badge">✨ {{ flavor }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if role == 'roaster' %}
+                        
+                        {% if item.specs.certs %}
+                        <div class="mb-2 text-center">
+                            {% for cert in item.specs.certs %}
+                                <span class="badge rounded-pill border border-success text-success bg-white" style="font-size:0.65rem; font-weight:700;">🏅 {{ cert }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3 text-center">
+                            {% if item.stock_status == 'Low Stock' %}
+                                <div class="badge bg-warning text-dark w-100 py-2 border border-warning">⚠️ Low Stock ({{ item.highlight.split(': ')[1] }})</div>
+                            {% elif item.stock_status == 'Out of Stock' %}
+                                <div class="badge bg-secondary w-100 py-2">❌ Habis / Out of Stock</div>
+                            {% else %}
+                                <div class="badge bg-success w-100 py-2">✅ {{ item.highlight.split(': ')[1] }} Available</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="qc-box">
+                            <div class="qc-section-title">Green QC</div>
+                            <div class="data-grid">
+                                <div><span class="lbl">Moisture</span> <span class="val {% if item.specs.moisture|float > 12.5 %}val-danger{% endif %}">{{ item.specs.moisture }}%</span></div>
+                                <div><span class="lbl">Water Act</span> <span class="val">{{ item.specs.aw }}</span></div>
+                                <div><span class="lbl">Defect</span> <span class="val {% if item.specs.defect|int > 10 %}val-danger{% endif %}">{{ item.specs.defect }}</span></div>
+                                <div><span class="lbl">Crop</span> <span class="val">{{ item.specs.crop }}</span></div>
+                                <div style="grid-column: 1 / -1; border-top:1px dashed rgba(0,0,0,0.1); margin-top:2px; padding-top:2px;">
+                                    <span class="lbl">Screen</span> <span class="val">{{ item.specs.screen }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roast-box">
+                            <div class="qc-section-title">Roast Profile</div>
+                            <div class="data-grid">
+                                <div><span class="lbl">Agtron</span> <span class="val">{{ item.specs.agtron }}</span></div>
+                                <div><span class="lbl">1st Crack</span> <span class="val">{{ item.specs.first_crack }}°C</span></div>
+                                <div style="grid-column: 1 / -1; border-top:1px dashed rgba(0,0,0,0.1); margin-top:2px; padding-top:2px;">
+                                    <span class="lbl">Target DTR</span> <span class="val text-danger">{{ item.specs.dtr }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ops-box">
+                            <div class="d-flex justify-content-between mb-1" style="border-bottom:1px solid #eee; padding-bottom:2px;">
+                                <span class="lbl text-uppercase" style="font-size:0.6rem;">Process</span>
+                                <span class="val text-dark">{{ item.detail_1.replace('⚙️ ', '') }}</span>
+                            </div>
+                            <div class="data-grid">
+                                <div><span class="lbl">Ferm.</span> <span class="val">{{ item.specs.ferm }}h</span></div>
+                                <div><span class="lbl">Score</span> <span class="val text-primary">{{ item.score }}</span></div>
+                                <div><span class="lbl">Acid</span> <span class="val text-dark">{{ item.specs.acid }}</span></div>
+                                <div><span class="lbl">Body</span> <span class="val text-dark">{{ item.specs.body }}</span></div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between text-center p-2 border rounded bg-white mt-1" style="font-size:0.75rem;">
+                            <div style="flex:1; border-right:1px solid #eee;">
+                                <div class="text-muted text-uppercase" style="font-size:0.6rem;">Est. Shrinkage</div>
+                                <div class="fw-bold text-danger">{{ item.specs.shrink }}%</div>
+                            </div>
+                            <div style="flex:1;">
+                                <div class="text-muted text-uppercase" style="font-size:0.6rem;">Resting Time</div>
+                                <div class="fw-bold text-success">{{ item.specs.rest }} Days</div>
+                            </div>
+                        </div>
+
+                    {% endif %}
+
+                    {% if role == 'barista' %}
+                        <p class="text-muted small fst-italic mb-2">{{ item.description }}</p>
+                        
+                        {% if item.base_coffee != '-' %}
+                            <div class="small fw-bold text-success mb-1">🌱 Base: {{ item.base_coffee }}</div>
+                        {% endif %}
+                        
+                        {% if item.ingredients %}
+                            <div class="small text-muted mb-2">
+                                🧪 Ingr: {{ item.ingredients|join(', ') }}
+                            </div>
+                        {% endif %}
+
+                        {% if item.specs.temp != '-' %}
+                        <div class="tech-grid">
+                            <div class="tech-item">
+                                <div class="tech-val">{{ item.specs.temp }}°C</div>
+                                <div class="tech-lbl">Suhu</div>
+                            </div>
+                            <div class="tech-item">
+                                <div class="tech-val">{{ item.specs.time }}</div>
+                                <div class="tech-lbl">Waktu</div>
+                            </div>
+                            <div class="tech-item">
+                                <div class="tech-val">{{ item.specs.ratio }}</div>
+                                <div class="tech-lbl">Rasio</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if role == 'petani' %}
+                        <div class="mt-2 mb-3">
+                            <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                                <span class="text-muted small">Status:</span>
+                                <span class="fw-bold text-success">{{ item.detail_2.split(': ')[1] }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted small">Cup Score:</span>
+                                <span class="fw-bold text-primary">{{ item.highlight.split(': ')[1] }}</span>
+                            </div>
+                        </div>
+                        <div class="alert alert-success py-2 px-2 small text-center mb-0">
+                            Potensi pasar tinggi untuk profil rasa di atas.
+                        </div>
+                    {% endif %}
+
+                    <a href="/detail/{{ item.id_clean }}" class="btn btn-detail mt-3">
+                        Lihat Traceability & Graph &rarr;
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
