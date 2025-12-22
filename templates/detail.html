@@ -3,75 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ info.nama }} - Detail Knowledge</title>
+    <title>{{ info.nama }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #334155; }
+        :root {
+            --bs-font-sans-serif: 'Plus Jakarta Sans', sans-serif;
+            --color-text-main: #0f172a;
+            --color-text-muted: #64748b;
+            --color-border: #e2e8f0;
+        }
+        body { background-color: #f8fafc; color: var(--color-text-main); }
         
+        /* Header Hero */
         .detail-header {
-            background: linear-gradient(120deg, #1e293b 0%, #0f172a 100%);
-            color: white; padding: 50px 0 40px 0; margin-bottom: 40px;
-            border-bottom: 6px solid #38bdf8;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white; padding: 60px 0 40px 0; margin-bottom: 40px;
+            border-bottom: 4px solid #38bdf8;
         }
-        .back-btn { color: #94a3b8; text-decoration: none; font-weight: 600; display: inline-block; margin-bottom: 15px; }
-        .back-btn:hover { color: white; }
+        .back-link { color: #94a3b8; text-decoration: none; font-weight: 700; font-size: 0.9rem; }
+        .back-link:hover { color: white; }
 
-        .info-card {
-            background: white; border: none; border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            margin-bottom: 24px; overflow: hidden;
+        /* Unified Card Style */
+        .detail-card {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 24px;
+            overflow: hidden;
         }
+        
         .card-head {
-            background-color: #fff; padding: 20px 24px;
+            background: #fff;
+            padding: 16px 24px;
             border-bottom: 1px solid #f1f5f9;
-            font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
-            color: #475569; display: flex; align-items: center; gap: 10px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-text-muted);
+            display: flex; align-items: center; gap: 8px;
         }
         .card-content { padding: 24px; }
 
-        .data-label { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 4px; }
-        .data-value { font-size: 1.1rem; font-weight: 700; color: #1e293b; }
-        .data-helper { font-size: 0.8rem; color: #64748b; line-height: 1.4; margin-top: 2px; border-left: 2px solid #e2e8f0; padding-left: 8px; }
+        /* Data Items */
+        .data-row { margin-bottom: 16px; }
+        .lbl { font-size: 0.7rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .val { font-size: 1.1rem; font-weight: 700; color: var(--color-text-main); }
+        
+        .helper-text {
+            font-size: 0.8rem; color: var(--color-text-muted); font-style: italic;
+            border-left: 3px solid #e2e8f0; padding-left: 10px; margin-top: 4px;
+        }
 
-        .badge-flavor { background-color: #fef3c7; color: #d97706; padding: 6px 12px; border-radius: 20px; margin: 0 4px 4px 0; font-weight: 600; display: inline-block; }
-        .badge-ingr { background-color: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 8px; margin: 0 4px 4px 0; font-weight: 600; font-size: 0.9rem; display: inline-block; }
+        /* Badges */
+        .badge-pill {
+            background: #eff6ff; color: #1d4ed8; padding: 6px 12px; 
+            border-radius: 50px; font-size: 0.8rem; font-weight: 600; margin-right: 5px;
+        }
 
-        .trace-item { position: relative; padding-left: 30px; margin-bottom: 25px; }
-        .trace-item::before { content: ''; position: absolute; left: 0; top: 5px; width: 14px; height: 14px; background: #cbd5e1; border-radius: 50%; z-index: 2; }
-        .trace-item::after { content: ''; position: absolute; left: 6px; top: 18px; width: 2px; height: 100%; background: #e2e8f0; z-index: 1; }
-        .trace-item:last-child::after { display: none; }
-        .trace-item:last-child::before { background: #38bdf8; box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2); }
+        /* Traceability */
+        .trace-step { position: relative; padding-left: 35px; margin-bottom: 30px; }
+        .trace-step::before {
+            content: ''; position: absolute; left: 0; top: 6px; width: 14px; height: 14px;
+            background: #cbd5e1; border-radius: 50%; z-index: 2;
+        }
+        .trace-step::after {
+            content: ''; position: absolute; left: 6px; top: 20px; width: 2px; height: 100%;
+            background: #e2e8f0; z-index: 1;
+        }
+        .trace-step:last-child::after { display: none; }
+        .trace-step:last-child::before { background: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2); }
 
         /* Reco Card */
-        .reco-card { background: #f1f5f9; border-radius: 12px; padding: 15px; text-decoration: none; color: inherit; display: block; transition: 0.2s; border: 1px solid transparent; }
-        .reco-card:hover { border-color: #38bdf8; background: white; transform: translateY(-3px); }
+        .reco-card {
+            display: block; background: white; border: 1px solid var(--color-border);
+            padding: 15px; border-radius: 12px; text-decoration: none; color: inherit;
+            transition: 0.2s;
+        }
+        .reco-card:hover { border-color: #38bdf8; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
 <div class="detail-header">
     <div class="container">
-        <a href="javascript:history.back()" class="back-btn">&larr; Kembali</a>
-        <div class="row align-items-end">
+        <a href="javascript:history.back()" class="back-link">&larr; KEMBALI</a>
+        <div class="row align-items-end mt-3">
             <div class="col-lg-8">
                 <h1 class="display-5 fw-bold mb-2">{{ info.nama }}</h1>
-                <p class="lead mb-0 text-white-50">{{ info.description }}</p>
+                <p class="lead mb-0 text-white-50">
+                    {% if info.description %}{{ info.description }}{% else %}Detail informasi produk lengkap.{% endif %}
+                </p>
             </div>
             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-                <div class="bg-white text-dark rounded-4 p-3 d-inline-block shadow-lg">
-                    <div class="row g-0 align-items-center text-start">
-                        {% if info.skor %}
-                        <div class="col px-3 border-end">
-                            <div class="small text-uppercase fw-bold text-muted">Score</div>
-                            <div class="fs-3 fw-bold text-primary">{{ info.skor }}</div>
-                        </div>
-                        {% endif %}
-                        <div class="col px-3">
-                            <div class="small text-uppercase fw-bold text-muted">Harga</div>
-                            <div class="fs-4 fw-bold">{{ info.harga }}</div>
-                        </div>
+                <div class="bg-white text-dark rounded-4 p-3 d-inline-block shadow-lg text-start" style="min-width: 200px;">
+                    <div class="d-flex justify-content-between gap-4 border-bottom pb-2 mb-2">
+                        <span class="small fw-bold text-muted">SCORE</span>
+                        <span class="fs-4 fw-bold text-primary">{{ info.skor if info.skor else '-' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between gap-4">
+                        <span class="small fw-bold text-muted">HARGA</span>
+                        <span class="fs-5 fw-bold">{{ info.harga if info.harga else '-' }}</span>
                     </div>
                 </div>
             </div>
@@ -81,107 +116,201 @@
 
 <div class="container pb-5">
     <div class="row">
+        
         <div class="col-lg-4">
-            <div class="info-card">
+            <div class="detail-card">
                 <div class="card-head">📋 Informasi Umum</div>
                 <div class="card-content">
                     {% if info.shop %}
-                    <div class="data-group">
-                        <div class="data-label">Disajikan Oleh</div>
-                        <div class="data-value">{{ info.shop }}</div>
+                    <div class="data-row">
+                        <span class="lbl">Disajikan Oleh</span>
+                        <span class="val">{{ info.shop }}</span>
                     </div>
                     {% endif %}
+                    
                     {% if info.badges %}
-                    <div class="data-group">
-                        <div class="data-label">Flavor Notes</div>
-                        <div class="mt-2">
+                    <div class="data-row">
+                        <span class="lbl mb-2">Flavor Notes</span>
+                        <div>
                             {% for flavor in info.badges %}
-                                <span class="badge-flavor">✨ {{ flavor }}</span>
+                                <span class="badge-pill bg-warning-subtle text-warning-emphasis">✨ {{ flavor }}</span>
                             {% endfor %}
                         </div>
+                        <div class="helper-text mt-2">Karakter rasa dominan.</div>
                     </div>
                     {% endif %}
                 </div>
             </div>
 
             {% if info.specs.temp or info.moisture %}
-            <div class="info-card">
-                <div class="card-head">⚙️ Data Teknis</div>
+            <div class="detail-card">
+                <div class="card-head">⚙️ Spesifikasi Teknis</div>
                 <div class="card-content">
+                    
                     {% if info.specs.temp %}
-                    <div class="row">
-                        <div class="col-6 data-group">
-                            <div class="data-label">Suhu</div>
-                            <div class="data-value">{{ info.specs.temp }}°C</div>
+                    <div class="row data-row">
+                        <div class="col-6">
+                            <span class="lbl">Suhu</span>
+                            <span class="val">{{ info.specs.temp }}°C</span>
                         </div>
-                        <div class="col-6 data-group">
-                            <div class="data-label">Waktu</div>
-                            <div class="data-value">{{ info.specs.time }}</div>
+                        <div class="col-6">
+                            <span class="lbl">Waktu</span>
+                            <span class="val">{{ info.specs.time }}</span>
                         </div>
                     </div>
                     {% endif %}
+
                     {% if info.moisture %}
-                    <div class="data-group">
-                        <div class="data-label">Moisture / Aw</div>
-                        <div class="data-value">{{ info.moisture }}% / {{ info.specs.aw }}</div>
-                        <div class="data-helper">Parameter stabilitas biji hijau.</div>
+                    <div class="row data-row">
+                        <div class="col-6">
+                            <span class="lbl">Moisture</span>
+                            <span class="val">{{ info.moisture }}%</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="lbl">Density</span>
+                            <span class="val">{{ info.density }}</span>
+                        </div>
                     </div>
                     {% endif %}
+
+                    {% if info.specs.agtron %}
+                    <div class="data-row">
+                        <span class="lbl">Agtron Number</span>
+                        <span class="val">{{ info.specs.agtron }}</span>
+                        <div class="helper-text">Indikator warna sangrai (makin tinggi = makin terang).</div>
+                    </div>
+                    {% endif %}
+
                 </div>
             </div>
             {% endif %}
         </div>
 
         <div class="col-lg-8">
+
             {% if info.ingredients %}
-            <div class="info-card">
-                <div class="card-head text-primary">🧪 Komposisi</div>
+            <div class="detail-card border-primary-subtle">
+                <div class="card-head text-primary-emphasis bg-primary-subtle bg-opacity-10">🧪 Komposisi & Bahan</div>
                 <div class="card-content">
-                    {% for ing in info.ingredients %}<span class="badge-ingr">{{ ing }}</span>{% endfor %}
+                    <div class="mb-3">
+                        {% for ing in info.ingredients %}
+                            <span class="badge-pill">{{ ing }}</span>
+                        {% endfor %}
+                    </div>
                     {% if info.base_coffee %}
-                    <div class="p-3 bg-light rounded border mt-4">
-                        <div class="data-label">Base Coffee</div>
-                        <div class="fw-bold fs-5 text-dark">{{ info.base_coffee }}</div>
+                    <div class="p-3 bg-light rounded border">
+                        <span class="lbl">Base Coffee</span>
+                        <div class="fs-5 fw-bold text-dark">{{ info.base_coffee }}</div>
                     </div>
                     {% endif %}
                 </div>
             </div>
             {% endif %}
 
-            <div class="info-card">
+            {% if info.origin or info.farm %}
+            <div class="detail-card">
                 <div class="card-head text-success">🌍 Jejak Asal-Usul</div>
                 <div class="card-content">
-                    <div class="ps-2">
+                    <div class="ps-1">
                         {% if info.origin %}
-                        <div class="trace-item">
-                            <div class="data-label">Origin</div>
-                            <div class="fw-bold fs-5">{{ info.origin }}</div>
+                        <div class="trace-step">
+                            <span class="lbl">Origin</span>
+                            <div class="fs-5 fw-bold">{{ info.origin }}</div>
+                            <div class="helper-text">Lokasi geografis tanam.</div>
                         </div>
                         {% endif %}
+
                         {% if info.farm %}
-                        <div class="trace-item">
-                            <div class="data-label">Farm</div>
-                            <div class="fw-bold fs-5">{{ info.farm }}</div>
+                        <div class="trace-step">
+                            <span class="lbl">Farm / Producer</span>
+                            <div class="fs-5 fw-bold">{{ info.farm }}</div>
+                            {% if info.altitude %}
+                            <div class="helper-text">Ketinggian: {{ info.altitude }} mdpl</div>
+                            {% endif %}
                         </div>
                         {% endif %}
-                        <div class="trace-item">
-                            <div class="data-label">Produk</div>
-                            <div class="fw-bold fs-5 text-success">{{ info.nama }}</div>
+
+                        {% if info.process %}
+                        <div class="trace-step">
+                            <span class="lbl">Process</span>
+                            <div class="fs-5 fw-bold">{{ info.process }}</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="trace-step">
+                            <span class="lbl">Produk Akhir</span>
+                            <div class="fs-5 fw-bold text-success">{{ info.nama }}</div>
                         </div>
                     </div>
                 </div>
             </div>
+            {% endif %}
+
+            {% if info.specs.shrink and info.specs.shrink != 'None' %}
+            <div class="detail-card border-warning">
+                <div class="card-head text-warning-emphasis bg-warning-subtle bg-opacity-25">🧮 Kalkulator Yield & HPP</div>
+                <div class="card-content">
+                    <p class="small text-muted mb-3">
+                        Estimasi HPP Roasted Bean berdasarkan data susut sangrai.
+                        <br><strong>Shrinkage Data: {{ info.specs.shrink }}%</strong>
+                    </p>
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <label class="lbl">Harga Green Bean (Rp/Kg)</label>
+                            <input type="number" id="inputGreenPrice" class="form-control" placeholder="120000">
+                        </div>
+                        <div class="col-md-2">
+                            <button onclick="calculateHPP()" class="btn btn-warning w-100 fw-bold text-white">Hitung</button>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="lbl">Est. HPP Roasted</label>
+                            <input type="text" id="outputRoastedPrice" class="form-control fw-bold text-success" readonly value="-">
+                        </div>
+                    </div>
+                    <script>
+                        function calculateHPP() {
+                            // Ambil shrink dari template → fallback ke 0 jika tidak valid
+                            let shrinkageRaw = "{{ info.specs.shrink }}";
+                            
+                            // Konversi ke number
+                            let shrinkage = parseFloat(shrinkageRaw);
+                            if (isNaN(shrinkage) || shrinkage <= 0 || shrinkage >= 100) {
+                                alert("Data shrinkage tidak valid!");
+                                return;
+                            }
+
+                            // Ambil harga input
+                            let greenPriceInput = document.getElementById('inputGreenPrice').value.trim();
+                            let greenPrice = parseFloat(greenPriceInput);
+
+                            if (isNaN(greenPrice) || greenPrice <= 0) {
+                                alert("Masukkan harga beli green bean yang valid!");
+                                return;
+                            }
+
+                            // Hitung yield
+                            let yieldFactor = 1 - (shrinkage / 100);
+
+                            // Hitung roasted price
+                            let roastedPrice = greenPrice / yieldFactor;
+
+                            // Output hasil
+                            document.getElementById('outputRoastedPrice').value =
+                                Math.ceil(roastedPrice).toLocaleString('id-ID');
+                        }
+                    </script>
+                </div>
+            </div>
+            {% endif %}
 
             {% if info.recommendations %}
             <div class="mt-5">
-                <h5 class="fw-bold mb-3 text-secondary text-uppercase" style="font-size:0.8rem; letter-spacing:1px;">
-                    Produk Serupa dari {{ info.origin }}
-                </h5>
+                <h6 class="fw-bold text-secondary text-uppercase mb-3 ps-1" style="font-size:0.75rem; letter-spacing:1px;">Produk Serupa</h6>
                 <div class="row g-3">
                     {% for rec in info.recommendations %}
                     <div class="col-md-4">
                         <a href="/detail/{{ rec.id }}" class="reco-card">
-                            <div class="fw-bold text-dark">{{ rec.name }}</div>
+                            <div class="fw-bold text-dark mb-1">{{ rec.name }}</div>
                             <div class="small text-muted">{{ rec.price }}</div>
                         </a>
                     </div>

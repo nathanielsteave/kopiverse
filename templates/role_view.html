@@ -1,328 +1,350 @@
 <!DOCTYPE html>
 <html lang="id">
-    <head>
-        <meta charset="UTF-8">
-        <title>{{ title }}</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-            rel="stylesheet">
-        <link
-            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
-            rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bs-font-sans-serif: 'Plus Jakarta Sans', sans-serif;
+            --color-text-main: #0f172a;
+            --color-text-muted: #64748b;
+            --color-border: #e2e8f0;
+        }
 
-        <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; color: #1f2937; }
-        .role-petani { --theme: #059669; --bg-theme: #ecfdf5; }
-        .role-roaster { --theme: #dc2626; --bg-theme: #fef2f2; }
-        .role-barista { --theme: #0891b2; --bg-theme: #ecfeff; }
+        body {
+            background-color: #f8fafc;
+            color: var(--color-text-main);
+        }
+
+        /* --- TEMA WARNA DINAMIS --- */
+        .role-petani { --theme: #10b981; --theme-soft: #d1fae5; --theme-text: #065f46; }
+        .role-roaster { --theme: #f43f5e; --theme-soft: #ffe4e6; --theme-text: #881337; }
+        .role-barista { --theme: #06b6d4; --theme-soft: #cffafe; --theme-text: #164e63; }
+
+        /* Navbar */
+        .navbar-custom {
+            background-color: #1e293b;
+            border-bottom: 4px solid var(--theme);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        /* Filter Section */
+        .filter-card {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* KARTU UTAMA */
+        .card-custom {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            transition: all 0.2s ease-in-out;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .card-custom:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.08);
+            border-color: var(--theme);
+        }
+
+        /* Header Kartu */
+        .card-header-styled {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            background: #fff;
+        }
         
-        .navbar-custom { background-color: #111827; border-bottom: 4px solid var(--theme); }
-        .card-custom { border: 1px solid #e5e7eb; border-radius: 12px; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); height: 100%; display: flex; flex-direction: column; transition: 0.3s; }
-        .card-custom:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: var(--theme); }
-        .card-header-styled { padding: 15px 20px; border-bottom: 1px solid #f3f4f6; }
-        .price-badge { float: right; background: var(--bg-theme); color: var(--theme); font-weight: 800; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; }
-        .item-title { font-weight: 800; font-size: 1.15rem; color: #111827; margin: 0; }
-        .item-subtitle { font-size: 0.8rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .card-body-styled { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+        .price-badge {
+            float: right;
+            background-color: var(--theme-soft);
+            color: var(--theme-text);
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .item-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--color-text-main);
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
         
-        /* Grid & Boxes */
-        .qc-box { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.8rem; }
-        .roast-box { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.8rem; }
-        .ops-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; margin-bottom: 8px; font-size: 0.75rem; }
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-        .lbl { color: #64748b; font-weight: 600; }
-        .val { color: #0f172a; font-weight: 800; float: right; }
-        .val-danger { color: #dc2626; }
+        .item-subtitle {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Body Kartu */
+        .card-body-styled {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Labels & Values */
+        .lbl { font-size: 0.7rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; }
+        .val { font-size: 0.9rem; font-weight: 700; color: #334155; }
         
-        .btn-detail { width: 100%; margin-top: auto; padding: 10px; background: white; border: 2px solid var(--theme); color: var(--theme); font-weight: 700; border-radius: 10px; text-decoration: none; display: block; text-align: center; }
-        .btn-detail:hover { background: var(--theme); color: white; }
+        /* Badges */
+        .badge-flavor {
+            background-color: #fff7ed; color: #c2410c; border: 1px solid #fed7aa;
+            font-size: 0.7rem; padding: 4px 8px; border-radius: 20px; font-weight: 600;
+        }
+        
+        /* --- ROASTER GRIDS --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 12px;
+            font-size: 0.85rem;
+        }
+        .grid-box {
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid transparent;
+        }
+        .box-qc { background: #fff1f2; border-color: #fecdd3; } /* Pink */
+        .box-roast { background: #fff7ed; border-color: #fed7aa; } /* Orange */
+        
+        .grid-header {
+            grid-column: 1 / -1;
+            font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 4px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 2px;
+        }
+        .row-data { display: flex; justify-content: space-between; align-items: center; }
+
+        /* --- BARISTA TECH --- */
+        .tech-pill {
+            background: #f0f9ff; border: 1px solid #e0f2fe;
+            border-radius: 8px; padding: 8px; text-align: center;
+        }
+
+        /* Button */
+        .btn-action {
+            width: 100%;
+            margin-top: auto;
+            padding: 10px;
+            background: white;
+            border: 2px solid var(--theme);
+            color: var(--theme);
+            font-weight: 700;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            background: var(--theme);
+            color: white;
+        }
     </style>
-    </head>
-    <body class="role-{{ role }}">
+</head>
+<body class="role-{{ role }}">
 
-        <nav class="navbar navbar-dark navbar-custom mb-4 shadow-sm">
-            <div class="container">
-                <div class="d-flex align-items-center">
-                    <a href="/"
-                        class="btn btn-outline-light btn-sm me-3 fw-bold border-2">&larr;
-                        MENU</a>
-                    <span class="navbar-brand mb-0 h1 fw-bold">{{ title
-                        }}</span>
-                </div>
+<nav class="navbar navbar-dark navbar-custom mb-4">
+    <div class="container">
+        <div class="d-flex align-items-center">
+            <a href="/" class="btn btn-outline-light btn-sm me-3 fw-bold opacity-75">MENU</a>
+            <span class="navbar-brand mb-0 h1 fw-bold">{{ title }}</span>
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="filter-card">
+                <form action="/role/{{ role }}" method="get" class="row g-2 align-items-center">
+                    
+                    <div class="col-md-{{ '4' if role in ['roaster', 'petani'] else '10' }}">
+                        <input type="text" name="q" class="form-control border-secondary-subtle" 
+                               placeholder="Cari..." value="{{ search_query }}">
+                    </div>
+                    
+                    {% if role in ['roaster', 'petani'] %}
+                    <div class="col-md-3">
+                        <select name="origin" class="form-select border-secondary-subtle">
+                            <option value="">Semua Origin</option>
+                            {% for o in origins %}
+                                <option value="{{ o }}" {% if sel_origin == o %}selected{% endif %}>{{ o }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="process" class="form-select border-secondary-subtle">
+                            <option value="">Semua Proses</option>
+                            {% for p in processes %}
+                                <option value="{{ p }}" {% if sel_process == p %}selected{% endif %}>{{ p }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-dark w-100 fw-bold">Filter</button>
+                    </div>
+                </form>
+                
+                {% if search_query or sel_origin or sel_process %}
+                    <div class="text-center mt-3 border-top pt-2">
+                        <a href="/role/{{ role }}" class="text-danger small fw-bold text-decoration-none">↺ Reset Filter</a>
+                    </div>
+                {% endif %}
             </div>
-        </nav>
+        </div>
+    </div>
 
-        <div class="container pb-5">
-            <div class="row justify-content-center mb-4">
-                <div class="col-md-8">
-                    <div class="search-wrapper text-center p-3">
-                        <form action="/role/{{ role }}" method="get"
-                            class="d-flex gap-2">
-                            <input type="text" name="q" class="form-control"
-                                placeholder="Cari kopi, origin, rasa..."
-                                value="{{ search_query }}">
-                            <button type="submit"
-                                class="btn btn-info text-white fw-bold">Cari</button>
-                        </form>
-                        {% if search_query %}
-                        <a href="/role/{{ role }}"
-                            class="text-danger small fw-bold mt-2 d-inline-block text-decoration-none">Reset
-                            Filter</a>
+    <div class="row g-4">
+        {% for item in data %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card-custom">
+                
+                <div class="card-header-styled">
+                    {% if item.price %}
+                        <span class="price-badge">{{ item.price }}</span>
+                    {% endif %}
+                    
+                    <h4 class="item-title">{{ item.title }}</h4>
+                    
+                    <div class="item-subtitle">
+                        {% if role == 'roaster' and item.origin %} 
+                            📍 {{ item.origin }} 
+                        {% elif role == 'barista' and item.shop %} 
+                            🏠 {{ item.shop }} 
                         {% endif %}
                     </div>
                 </div>
-            </div>
 
-            <div class="row g-4">
-                {% for item in data %}
-                <div class="col-md-6 col-lg-4">
-                    <div class="card-custom">
-
-                        <div class="card-header-styled">
-                            {% if item.price %}
-                            <span class="price-badge">{{ item.price }}</span>
-                            {% endif %}
-
-                            <h4 class="item-title">{{ item.title }}</h4>
-
-                            <div class="item-subtitle">
-                                {% if role == 'roaster' and item.origin %} 📍 {{
-                                item.origin }} {% endif %}
-                                {% if role == 'petani' and item.panen %} Panen:
-                                {{ item.panen }} {% endif %}
-                                {% if role == 'barista' and item.shop %} Served
-                                by {{ item.shop }} {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="card-body-styled">
-
-                            {% if item.badges %}
-                            <div class="mb-2">
-                                {% for flavor in item.badges %}
-                                <span class="badge bg-warning text-dark me-1">✨
-                                    {{ flavor }}</span>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-
-                            {% if role == 'roaster' %}
-                            {% if item.specs.certs %}
-                            <div class="mb-2 text-center">
-                                {% for cert in item.specs.certs %}
-                                <span
-                                    class="badge rounded-pill border border-success text-success bg-white">🏅
-                                    {{ cert }}</span>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-
-                            {% if item.stock_status %}
-                            <div class="mb-3 text-center">
-                                {% if item.stock_status == 'Low Stock' %}
-                                <div
-                                    class="badge bg-warning text-dark w-100 py-2 border border-warning">⚠️
-                                    Low Stock ({{ item.highlight.split(': ')[1]
-                                    }})</div>
-                                {% elif item.stock_status == 'Out of Stock' %}
-                                <div class="badge bg-secondary w-100 py-2">❌
-                                    Habis / Out of Stock</div>
-                                {% else %}
-                                <div class="badge bg-success w-100 py-2">✅ {{
-                                    item.highlight.split(': ')[1] }}
-                                    Available</div>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-
-                            {% if item.specs.moisture or item.specs.aw or
-                            item.specs.defect or item.specs.crop %}
-                            <div class="qc-box">
-                                <div
-                                    style="font-size:0.65rem; font-weight:800; text-transform:uppercase; color:#9f1239; border-bottom:1px dashed rgba(0,0,0,0.1); margin-bottom:5px;">Green
-                                    QC</div>
-                                <div class="data-grid">
-                                    {% if item.specs.moisture %}<div><span
-                                            class="lbl">Moisture</span> <span
-                                            class="val {% if item.specs.moisture|float > 12.5 %}val-danger{% endif %}">{{
-                                            item.specs.moisture
-                                            }}%</span></div>{% endif %}
-                                    {% if item.specs.aw %}<div><span
-                                            class="lbl">Water Act</span> <span
-                                            class="val">{{ item.specs.aw
-                                            }}</span></div>{% endif %}
-                                    {% if item.specs.defect %}<div><span
-                                            class="lbl">Defect</span> <span
-                                            class="val {% if item.specs.defect|int > 10 %}val-danger{% endif %}">{{
-                                            item.specs.defect }}</span></div>{%
-                                    endif %}
-                                    {% if item.specs.crop %}<div><span
-                                            class="lbl">Crop</span> <span
-                                            class="val">{{ item.specs.crop
-                                            }}</span></div>{% endif %}
-                                    {% if item.specs.screen %}<div
-                                        style="grid-column:1/-1; margin-top:4px; padding-top:2px; border-top:1px dashed #ddd;"><span
-                                            class="lbl">Screen</span> <span
-                                            class="val">{{ item.specs.screen
-                                            }}</span></div>{% endif %}
-                                </div>
-                            </div>
-                            {% endif %}
-
-                            {% if item.specs.agtron or item.specs.first_crack or
-                            item.specs.dtr %}
-                            <div class="roast-box">
-                                <div
-                                    style="font-size:0.65rem; font-weight:800; text-transform:uppercase; color:#9a3412; border-bottom:1px dashed rgba(0,0,0,0.1); margin-bottom:5px;">Roast
-                                    Profile</div>
-                                <div class="data-grid">
-                                    {% if item.specs.agtron %}<div><span
-                                            class="lbl">Agtron</span> <span
-                                            class="val">{{ item.specs.agtron
-                                            }}</span></div>{% endif %}
-                                    {% if item.specs.first_crack %}<div><span
-                                            class="lbl">1st Crack</span> <span
-                                            class="val">{{
-                                            item.specs.first_crack
-                                            }}°C</span></div>{% endif %}
-                                    {% if item.specs.dtr %}<div
-                                        style="grid-column:1/-1; margin-top:4px; padding-top:2px; border-top:1px dashed #ddd;"><span
-                                            class="lbl">DTR</span> <span
-                                            class="val text-danger">{{
-                                            item.specs.dtr }}</span></div>{%
-                                    endif %}
-                                </div>
-                            </div>
-                            {% endif %}
-
-                            {% if item.process or item.specs.ferm or
-                            item.specs.acid %}
-                            <div class="ops-box">
-                                {% if item.process %}
-                                <div class="d-flex justify-content-between mb-1"
-                                    style="border-bottom:1px solid #eee;">
-                                    <span class="lbl text-uppercase"
-                                        style="font-size:0.6rem;">Process</span>
-                                    <span class="val text-dark">{{ item.process
-                                        }}</span>
-                                </div>
-                                {% endif %}
-                                <div class="data-grid">
-                                    {% if item.specs.ferm %}<div><span
-                                            class="lbl">Ferm.</span> <span
-                                            class="val">{{ item.specs.ferm
-                                            }}h</span></div>{% endif %}
-                                    {% if item.score %}<div><span
-                                            class="lbl">Score</span> <span
-                                            class="val text-primary">{{
-                                            item.score }}</span></div>{% endif
-                                    %}
-                                    {% if item.specs.acid %}<div><span
-                                            class="lbl">Acid</span> <span
-                                            class="val text-dark">{{
-                                            item.specs.acid }}</span></div>{%
-                                    endif %}
-                                    {% if item.specs.body %}<div><span
-                                            class="lbl">Body</span> <span
-                                            class="val text-dark">{{
-                                            item.specs.body }}</span></div>{%
-                                    endif %}
-                                </div>
-                            </div>
-                            {% endif %}
-
-                            {% if item.specs.shrink or item.specs.rest %}
-                            <div
-                                class="d-flex justify-content-between text-center p-2 border rounded bg-white mt-1"
-                                style="font-size:0.75rem;">
-                                {% if item.specs.shrink %}
-                                <div
-                                    style="flex:1; border-right:1px solid #eee;">
-                                    <div class="text-muted text-uppercase"
-                                        style="font-size:0.6rem;">Est.
-                                        Shrinkage</div>
-                                    <div class="fw-bold text-danger">{{
-                                        item.specs.shrink }}%</div>
-                                </div>
-                                {% endif %}
-                                {% if item.specs.rest %}
-                                <div style="flex:1;">
-                                    <div class="text-muted text-uppercase"
-                                        style="font-size:0.6rem;">Resting
-                                        Time</div>
-                                    <div class="fw-bold text-success">{{
-                                        item.specs.rest }} Days</div>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-
-                            {% endif %}
-
-                            {% if role == 'barista' %}
-                            {% if item.description %}<p
-                                class="text-muted small fst-italic mb-2">{{
-                                item.description }}</p>{% endif %}
-                            {% if item.base_coffee %}<div
-                                class="small fw-bold text-success mb-1">🌱 Base:
-                                {{ item.base_coffee }}</div>{% endif %}
-                            {% if item.ingredients %}<div
-                                class="small text-muted mb-2">🧪 Ingr: {{
-                                item.ingredients|join(', ') }}</div>{% endif %}
-
-                            {% if item.specs.temp %}
-                            <div
-                                class="d-flex justify-content-between bg-light p-2 rounded mt-2 border small">
-                                <div class="text-center"><b>{{ item.specs.temp
-                                        }}°C</b><br><span
-                                        style="font-size:0.6rem">TEMP</span></div>
-                                {% if item.specs.time %}<div
-                                    class="text-center"><b>{{ item.specs.time
-                                        }}</b><br><span
-                                        style="font-size:0.6rem">TIME</span></div>{%
-                                endif %}
-                                {% if item.specs.ratio %}<div
-                                    class="text-center"><b>{{ item.specs.ratio
-                                        }}</b><br><span
-                                        style="font-size:0.6rem">RATIO</span></div>{%
-                                endif %}
-                            </div>
-                            {% endif %}
-                            {% endif %}
-
-                            {% if role == 'petani' %}
-                            <div class="mt-2 mb-3">
-                                <div
-                                    class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                                    <span
-                                        class="text-muted small">Status:</span>
-                                    <span class="fw-bold text-success">{{
-                                        'Organik' if item.organik == 'true' else
-                                        'Konvensional' }}</span>
-                                </div>
-                                {% if item.score %}
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted small">Cup
-                                        Score:</span>
-                                    <span class="fw-bold text-primary">{{
-                                        item.score }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-
-                            <a href="/detail/{{ item.id_clean }}"
-                                class="btn btn-detail mt-3">Lihat Detail
-                                &rarr;</a>
-
-                        </div>
+                <div class="card-body-styled">
+                    
+                    {% if item.badges %}
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for flavor in item.badges %}
+                            <span class="flavor-badge">✨ {{ flavor }}</span>
+                        {% endfor %}
                     </div>
+                    {% endif %}
+
+                    {% if role == 'roaster' %}
+                        {% if item.specs.certs %}
+                        <div class="text-center">
+                            {% for cert in item.specs.certs %}
+                                <span class="badge rounded-pill text-bg-light border text-secondary" style="font-size:0.65rem;">🏅 {{ cert }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if item.stock_status %}
+                        <div class="text-center">
+                            {% if item.stock_status == 'Low Stock' %}
+                                <span class="badge bg-warning text-dark w-100 py-2">⚠️ Low Stock ({{ item.highlight.split(': ')[1] }})</span>
+                            {% elif item.stock_status == 'Out of Stock' %}
+                                <span class="badge bg-secondary w-100 py-2">❌ Out of Stock</span>
+                            {% else %}
+                                <span class="badge bg-success w-100 py-2">✅ Available</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if item.specs.moisture %}
+                        <div class="grid-box box-qc">
+                            <div class="grid-header text-danger">Green Analysis</div>
+                            <div class="info-grid">
+                                <div class="row-data"><span class="lbl">Moisture</span> <span class="val">{{ item.specs.moisture }}%</span></div>
+                                <div class="row-data"><span class="lbl">Water Act</span> <span class="val">{{ item.specs.aw }}</span></div>
+                                <div class="row-data"><span class="lbl">Defect</span> <span class="val">{{ item.specs.defect }}</span></div>
+                                <div class="row-data"><span class="lbl">Crop</span> <span class="val">{{ item.specs.crop }}</span></div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if item.specs.agtron %}
+                        <div class="grid-box box-roast">
+                            <div class="grid-header text-warning" style="color:#c2410c">Roast Planner</div>
+                            <div class="info-grid">
+                                <div class="row-data"><span class="lbl">Agtron</span> <span class="val">{{ item.specs.agtron }}</span></div>
+                                <div class="row-data"><span class="lbl">1st Crack</span> <span class="val">{{ item.specs.first_crack }}°C</span></div>
+                                <div style="grid-column:1/-1; border-top:1px dashed #fed7aa; margin-top:4px; padding-top:2px;" class="row-data">
+                                    <span class="lbl">Target DTR</span> <span class="val text-danger">{{ item.specs.dtr }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if role == 'barista' %}
+                        {% if item.description %}
+                            <p class="text-muted small fst-italic mb-0">{{ item.description }}</p>
+                        {% endif %}
+                        
+                        {% if item.base_coffee %}
+                            <div class="p-2 bg-light rounded border small">
+                                <span class="lbl">Base Bean:</span> <span class="val text-success">{{ item.base_coffee }}</span>
+                            </div>
+                        {% endif %}
+
+                        {% if item.specs.temp %}
+                        <div class="d-flex gap-2">
+                            <div class="tech-pill flex-fill">
+                                <div class="val">{{ item.specs.temp }}°C</div>
+                                <div class="lbl">Temp</div>
+                            </div>
+                            <div class="tech-pill flex-fill">
+                                <div class="val">{{ item.specs.time }}</div>
+                                <div class="lbl">Time</div>
+                            </div>
+                            <div class="tech-pill flex-fill">
+                                <div class="val">{{ item.specs.ratio }}</div>
+                                <div class="lbl">Ratio</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if role == 'petani' %}
+                        <div class="p-3 bg-light rounded border">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="lbl">Status</span>
+                                <span class="val text-success">{{ item.detail_2.split(': ')[1] if ':' in item.detail_2 else item.detail_2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="lbl">Cup Score</span>
+                                <span class="val text-primary">{{ item.score }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <a href="/detail/{{ item.id_clean }}" class="btn btn-action mt-auto">Lihat Detail &rarr;</a>
+
                 </div>
-                {% endfor %}
             </div>
         </div>
+        {% endfor %}
+    </div>
+</div>
 
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
