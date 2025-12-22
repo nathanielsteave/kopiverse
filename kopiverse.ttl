@@ -1,0 +1,396 @@
+@prefix : <http://kopiverse.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://kopiverse.org/ontology#> .
+
+<http://kopiverse.org/ontology> rdf:type owl:Ontology ;
+                                 rdfs:comment "KopiVerse - Semantic Project (Full Commercial Data)."@id .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+:brewedFrom rdf:type owl:ObjectProperty ;
+            rdfs:domain :CoffeeBeverage ;
+            rdfs:range :CoffeeProduct .
+
+:hasDerivedOrigin rdf:type owl:ObjectProperty ;
+                  owl:propertyChainAxiom ( :producedBy :isLocatedIn ) .
+
+:hasFlavorNote rdf:type owl:ObjectProperty ;
+               rdfs:range :Descriptor .
+
+:hasIngredient rdf:type owl:ObjectProperty ;
+               rdfs:range :Ingredient .
+
+:hasVarietal rdf:type owl:ObjectProperty ;
+             rdfs:domain :CoffeeLot , :CoffeeProduct ;
+             rdfs:range :CoffeePlant .
+
+:isLocatedIn rdf:type owl:ObjectProperty , owl:TransitiveProperty ;
+             rdfs:range :GeographicRegion .
+
+:processedWith rdf:type owl:ObjectProperty ;
+               rdfs:domain :CoffeeLot ;
+               rdfs:range :ProcessingMethod ;
+               rdfs:label "diproses dengan"@id .
+
+:producedBy rdf:type owl:ObjectProperty ;
+            owl:inverseOf :produces ;
+            rdfs:domain :CoffeeLot , :CoffeeProduct ;
+            rdfs:range :Actor , :Farm .
+
+:produces rdf:type owl:ObjectProperty ;
+          rdfs:domain :Actor , :Farm ;
+          rdfs:range :CoffeeLot , :CoffeeProduct .
+
+:servedBy rdf:type owl:ObjectProperty ;
+          rdfs:domain :CoffeeBeverage ;
+          rdfs:range :Actor , :Coffeeshop .
+
+:hasCertification rdf:type owl:ObjectProperty ;
+                  rdfs:range :Certification .
+
+:isRoastedFrom rdf:type owl:AnnotationProperty .
+
+#################################################################
+#    Data Properties (Lengkap untuk semua Aktor)
+#################################################################
+
+# --- General ---
+:hasAltitude rdf:type owl:DatatypeProperty ; rdfs:range xsd:integer .
+:hasCuppingScore rdf:type owl:DatatypeProperty ; rdfs:range xsd:decimal .
+:hasPrice rdf:type owl:DatatypeProperty ; rdfs:range xsd:decimal .
+
+# --- Petani ---
+:hasHarvestDate rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:isOrganic rdf:type owl:DatatypeProperty ; rdfs:range xsd:boolean .
+:hasFertilizerType rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+
+# --- Roaster (Green Bean QC) ---
+:hasMoistureContent rdf:type owl:DatatypeProperty ; rdfs:range xsd:decimal .
+:hasBeanDensity rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:hasScreenSize rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:hasWaterActivity rdf:type owl:DatatypeProperty ; rdfs:range xsd:decimal .
+:hasDefectCount rdf:type owl:DatatypeProperty ; rdfs:range xsd:integer .
+:hasBeanGrade rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:hasCropYear rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:hasStockKg rdf:type owl:DatatypeProperty ; rdfs:range xsd:integer .
+:packagingType rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+
+# --- Roaster (Profiling) ---
+:recommendedRoastProfile rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:hasAgtronNumber rdf:type owl:DatatypeProperty ; rdfs:range xsd:integer .
+:hasFirstCrackTemp rdf:type owl:DatatypeProperty ; rdfs:range xsd:integer .
+:recommendedDTR rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:hasShrinkage rdf:type owl:DatatypeProperty ; rdfs:range xsd:decimal .
+:restingDays rdf:type owl:DatatypeProperty ; rdfs:range xsd:integer .
+
+# --- Sensory & Process ---
+:fermentationHours rdf:type owl:DatatypeProperty ; rdfs:range xsd:integer .
+:acidityLevel rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:bodyLevel rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+
+# --- Barista (Brewing) ---
+:brewingTemp rdf:type owl:DatatypeProperty ; rdfs:range xsd:integer .
+:brewingTime rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+:waterRatio rdf:type owl:DatatypeProperty ; rdfs:range xsd:string .
+
+#################################################################
+#    Classes
+#################################################################
+
+:Actor rdf:type owl:Class .
+:CoffeeBeverage rdf:type owl:Class .
+:CoffeeLot rdf:type owl:Class ; rdfs:subClassOf :CoffeeProduct .
+:CoffeeProduct rdf:type owl:Class .
+:CoffeePlant rdf:type owl:Class .
+:Coffeeshop rdf:type owl:Class ; rdfs:subClassOf :Actor .
+:Farm rdf:type owl:Class ; rdfs:subClassOf :Actor .
+:GeographicRegion rdf:type owl:Class .
+:Ingredient rdf:type owl:Class .
+:ProcessingMethod rdf:type owl:Class .
+:Descriptor rdf:type owl:Class .
+:Certification rdf:type owl:Class .
+:RoastedCoffee rdf:type owl:Class ; rdfs:subClassOf :CoffeeProduct .
+
+# Special Classes
+:SpecialtyCoffee rdf:type owl:Class .
+:PremiumLot rdf:type owl:Class .
+:HighAltitudeFarm rdf:type owl:Class .
+
+#################################################################
+#    Individuals: REFERENSI DASAR
+#################################################################
+
+# --- Regions ---
+:Indonesia rdf:type owl:NamedIndividual, :GeographicRegion .
+:Sumatra rdf:type owl:NamedIndividual, :GeographicRegion ; :isLocatedIn :Indonesia ; rdfs:label "Sumatra Island" .
+:Java rdf:type owl:NamedIndividual, :GeographicRegion ; :isLocatedIn :Indonesia ; rdfs:label "Java Island" .
+:Bali rdf:type owl:NamedIndividual, :GeographicRegion ; :isLocatedIn :Indonesia ; rdfs:label "Bali Kintamani" .
+:Flores rdf:type owl:NamedIndividual, :GeographicRegion ; :isLocatedIn :Indonesia ; rdfs:label "Flores Bajawa" .
+:Gayo rdf:type owl:NamedIndividual, :GeographicRegion ; :isLocatedIn :Sumatra ; rdfs:label "Aceh Gayo Highlands" .
+
+# --- Methods ---
+:FullWashed rdf:type owl:NamedIndividual, :ProcessingMethod ; rdfs:label "Proses Basah (Full Washed)" .
+:HoneyProcess rdf:type owl:NamedIndividual, :ProcessingMethod ; rdfs:label "Proses Honey" .
+:NaturalProcess rdf:type owl:NamedIndividual, :ProcessingMethod ; rdfs:label "Proses Natural (Dry)" .
+:AnaerobicNatural rdf:type owl:NamedIndividual, :ProcessingMethod ; rdfs:label "Anaerobic Natural (72h)" .
+
+# --- Certifications ---
+:OrganicCert rdf:type owl:NamedIndividual, :Certification ; rdfs:label "Organic Certified" .
+:FairTrade rdf:type owl:NamedIndividual, :Certification ; rdfs:label "Fair Trade" .
+:RainforestAlliance rdf:type owl:NamedIndividual, :Certification ; rdfs:label "Rainforest Alliance" .
+:HalalCert rdf:type owl:NamedIndividual, :Certification ; rdfs:label "Halal MUI" .
+
+# --- Actors ---
+:KebunGayoSejahtera rdf:type owl:NamedIndividual, :Farm ; :isLocatedIn :Gayo ; rdfs:label "Kebun Gayo Sejahtera" .
+:KebunFloresLestari rdf:type owl:NamedIndividual, :Farm ; :isLocatedIn :Flores ; rdfs:label "Kebun Flores Lestari" .
+:KebunBaliOrganik rdf:type owl:NamedIndividual, :Farm ; :isLocatedIn :Bali ; rdfs:label "Kebun Bali Organik" .
+:KebunIjenLestari rdf:type owl:NamedIndividual, :Farm ; :isLocatedIn :Java ; rdfs:label "Kebun Ijen Lestari" .
+:KebunRakyatLampung rdf:type owl:NamedIndividual, :Farm ; :isLocatedIn :Sumatra ; rdfs:label "Kebun Rakyat Lampung" .
+
+:KopiKenangan rdf:type owl:NamedIndividual, :Coffeeshop ; rdfs:label "Kopi Kenangan" .
+:StarbucksID rdf:type owl:NamedIndividual, :Coffeeshop ; rdfs:label "Starbucks Indonesia" .
+:ForeCoffee rdf:type owl:NamedIndividual, :Coffeeshop ; rdfs:label "Fore Coffee" .
+:Kopikini rdf:type owl:NamedIndividual, :Coffeeshop ; rdfs:label "Kopikini (Lokal)" .
+:ColdNBrew rdf:type owl:NamedIndividual, :Coffeeshop ; rdfs:label "Cold n Brew" .
+
+# --- Ingredients & Flavors ---
+:EspressoShot rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Espresso Shot" .
+:FreshMilk rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Fresh Milk" .
+:PalmSugar rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Gula Aren" .
+:Water rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Air Mineral" .
+:DolceSauce rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Saus Dolce" .
+:Cream rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Cooking Cream" .
+:VanillaSyrup rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Sirup Vanilla" .
+:ButterscotchSyrup rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Sirup Butterscotch" .
+:IceCube rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Es Batu" .
+:GayoCoffeeBeans rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Biji Kopi Gayo" .
+:PandanSyrup rdf:type owl:NamedIndividual, :Ingredient ; rdfs:label "Sirup Pandan Asli" .
+
+:Sweet rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Sweet" .
+:Acidic rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Acidic" .
+:Fruity rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Fruity" .
+:Bitter rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Bitter" .
+:Creamy rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Creamy Mouthfeel" .
+:Strong rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Strong" .
+:Spice rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Spicy" .
+:Buttery rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Buttery" .
+:Bold rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Bold Body" .
+:Clean rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Clean" .
+:Floral rdf:type owl:NamedIndividual, :Descriptor ; rdfs:label "Floral" .
+
+#################################################################
+#    Individuals: COFFEE LOTS (Green Bean Data - Petani & Roaster)
+#################################################################
+
+:Lot_Gayo_Ateng rdf:type owl:NamedIndividual, :CoffeeLot ;
+    rdfs:label "Gayo Ateng Super Grade" ;
+    rdfs:comment "Kopi Arabika Gayo grade 1 dengan notes fruity kompleks." ;
+    :hasPrice 650000 ;
+    :hasCuppingScore 86.5 ;
+    :producedBy :KebunGayoSejahtera ;
+    :hasDerivedOrigin :Gayo ;
+    :processedWith :FullWashed ;
+    
+    # Green Spec
+    :hasMoistureContent 11.5 ; :hasWaterActivity 0.58 ; :hasDefectCount 2 ;
+    :hasScreenSize "17-18" ; :hasBeanGrade "G1 Triple Pick" ; :hasCropYear "2024" ;
+    :hasStockKg 500 ; :packagingType "GrainPro" ; :hasHarvestDate "2023-10-15" ; :isOrganic "true"^^xsd:boolean ;
+    
+    # Roast Spec
+    :hasAgtronNumber 65 ; :hasFirstCrackTemp 202 ; :recommendedDTR "14%" ; :hasShrinkage 16.5 ; :restingDays 10 ;
+    :recommendedRoastProfile "City Roast" ;
+    :fermentationHours 12 ; :acidityLevel "Med-High" ; :bodyLevel "Syrupy" ;
+    :hasFlavorNote :Fruity, :Sweet, :Spice ;
+    :hasCertification :OrganicCert, :FairTrade .
+
+:Lot_Flores_Juria rdf:type owl:NamedIndividual, :CoffeeLot ;
+    rdfs:label "Flores Juria Super Grade" ;
+    rdfs:comment "Kopi langka dari Flores dengan rasa manis yang dominan." ;
+    :hasPrice 850000 ;
+    :hasCuppingScore 88.5 ;
+    :producedBy :KebunFloresLestari ;
+    :hasDerivedOrigin :Flores ;
+    :processedWith :FullWashed ;
+    
+    # Green Spec
+    :hasMoistureContent 12.0 ; :hasWaterActivity 0.61 ; :hasDefectCount 5 ;
+    :hasScreenSize "15-17" ; :hasBeanGrade "G1 Specialty" ; :hasCropYear "2023" ;
+    :hasStockKg 120 ; :packagingType "Vacuum Pack" ; :hasHarvestDate "2023-09-01" ;
+    
+    # Roast Spec
+    :hasAgtronNumber 55 ; :hasFirstCrackTemp 204 ; :recommendedDTR "16%" ; :hasShrinkage 15.0 ; :restingDays 14 ;
+    :recommendedRoastProfile "Medium Roast" ;
+    :fermentationHours 24 ; :acidityLevel "High" ; :bodyLevel "Juicy" ;
+    :hasFlavorNote :Fruity, :Sweet ;
+    :hasCertification :RainforestAlliance .
+
+:Lot_Bali_Kintamani rdf:type owl:NamedIndividual, :CoffeeLot ;
+    rdfs:label "Bali Kintamani Honey" ;
+    rdfs:comment "Kopi proses honey dengan karakter jeruk yang menyegarkan." ;
+    :hasPrice 250000 ;
+    :hasCuppingScore 83.0 ;
+    :producedBy :KebunBaliOrganik ;
+    :hasDerivedOrigin :Bali ;
+    :processedWith :HoneyProcess ;
+    
+    # Green Spec
+    :hasMoistureContent 11.8 ; :hasWaterActivity 0.55 ; :hasDefectCount 8 ;
+    :hasScreenSize "14-16" ; :hasBeanGrade "Grade 2" ; :hasCropYear "2024" ;
+    :hasStockKg 50 ; :packagingType "Jute Bag" ;
+    
+    # Roast Spec
+    :hasAgtronNumber 45 ; :hasFirstCrackTemp 198 ; :recommendedDTR "20%" ; :hasShrinkage 18.0 ; :restingDays 7 ;
+    :recommendedRoastProfile "Medium-Dark" ;
+    :fermentationHours 36 ; :acidityLevel "Medium" ; :bodyLevel "Tea-like" ;
+    :hasFlavorNote :Fruity, :Sweet ;
+    :hasCertification :HalalCert .
+
+:Lot_Java_Robusta rdf:type owl:NamedIndividual, :CoffeeLot ;
+    rdfs:label "Java Ijen Fine Robusta" ;
+    rdfs:comment "Robusta halus (Fine) dengan body tebal dan coklat." ;
+    :hasPrice 80000 ;
+    :hasCuppingScore 78.0 ;
+    :producedBy :KebunIjenLestari ;
+    :hasDerivedOrigin :Java ;
+    :processedWith :NaturalProcess ;
+    
+    # Green Spec
+    :hasMoistureContent 12.5 ; :hasWaterActivity 0.65 ; :hasDefectCount 15 ;
+    :hasScreenSize "18+" ; :hasBeanGrade "Fine Robusta" ; :hasCropYear "2024" ;
+    :hasStockKg 2000 ; :packagingType "GrainPro" ;
+    
+    # Roast Spec
+    :hasAgtronNumber 35 ; :hasFirstCrackTemp 208 ; :recommendedDTR "25%" ; :hasShrinkage 22.0 ; :restingDays 21 ;
+    :recommendedRoastProfile "Dark Roast" ;
+    :fermentationHours 0 ; :acidityLevel "Low" ; :bodyLevel "Bold" ;
+    :hasFlavorNote :Bold, :Bitter .
+
+:Lot_Robusta_Lampung_Kasar rdf:type owl:NamedIndividual, :CoffeeLot ;
+    rdfs:label "Robusta Lampung Asalan" ;
+    rdfs:comment "Kopi robusta komersial untuk bahan baku pabrik/kopi susu." ;
+    :hasPrice 45000 ;
+    :hasCuppingScore 70.0 ;
+    :producedBy :KebunRakyatLampung ;
+    :hasDerivedOrigin :Sumatra ;
+    :processedWith :AnaerobicNatural ;
+    
+    # Green Spec
+    :hasMoistureContent 13.0 ; :hasWaterActivity 0.70 ; :hasDefectCount 45 ;
+    :hasScreenSize "Unsorted" ; :hasBeanGrade "Asalan" ; :hasCropYear "2023" ;
+    :hasStockKg 5000 ; :packagingType "Gunny Sack" ;
+    
+    # Roast Spec
+    :hasAgtronNumber 25 ; :hasFirstCrackTemp 210 ; :recommendedDTR "30%" ; :hasShrinkage 25.0 ; :restingDays 30 ;
+    :recommendedRoastProfile "Very Dark" ;
+    :fermentationHours 72 ; :acidityLevel "None" ; :bodyLevel "Rough" ;
+    :hasFlavorNote :Bitter, :Strong .
+
+#################################################################
+#    Individuals: ROASTED BEANS (BASE COFFEE)
+#################################################################
+
+:HouseBlend_Kenangan rdf:type owl:NamedIndividual, :RoastedCoffee ;
+    rdfs:label "Kenangan House Blend" ;
+    :isRoastedFrom :Lot_Java_Robusta .
+
+:HouseBlend_Fore rdf:type owl:NamedIndividual, :RoastedCoffee ;
+    rdfs:label "Fore Espresso Blend" ;
+    :isRoastedFrom :Lot_Gayo_Ateng .
+
+:Espresso_Roast_SBux rdf:type owl:NamedIndividual, :RoastedCoffee ;
+    rdfs:label "Starbucks Espresso Roast" ;
+    :isRoastedFrom :Lot_Java_Robusta .
+
+:HouseBlend_ColdNBrew rdf:type owl:NamedIndividual, :RoastedCoffee ;
+    rdfs:label "CnB Signature Blend" ;
+    :isRoastedFrom :Lot_Flores_Juria .
+
+#################################################################
+#    Individuals: BEVERAGES (MENU BARISTA LENGKAP)
+#################################################################
+
+:EsKopiGulaAren rdf:type owl:NamedIndividual, :CoffeeBeverage ;
+    rdfs:label "Es Kopi Gula Aren" ;
+    :hasPrice 18000 ;
+    :servedBy :KopiKenangan ;
+    :brewedFrom :HouseBlend_Kenangan ;
+    :hasIngredient :EspressoShot, :FreshMilk, :PalmSugar, :IceCube ;
+    :hasFlavorNote :Sweet, :Creamy ;
+    :brewingTemp 91 ; :brewingTime "25 sec" ; :waterRatio "1:1.5" ;
+    rdfs:comment "Kopi susu kekinian dengan gula aren asli yang legit." .
+
+:AsianDolceLatte rdf:type owl:NamedIndividual, :CoffeeBeverage ;
+    rdfs:label "Asian Dolce Latte" ;
+    :hasPrice 35000 ;
+    :servedBy :StarbucksID ;
+    :brewedFrom :Espresso_Roast_SBux ;
+    :hasIngredient :EspressoShot, :FreshMilk, :DolceSauce ;
+    :hasFlavorNote :Sweet, :Strong ;
+    :brewingTemp 93 ; :brewingTime "28 sec" ; :waterRatio "1:2" ;
+    rdfs:comment "Kopi susu strong dengan saus dolce yang gurih dan manis." .
+
+:V60_Gayo_Special rdf:type owl:NamedIndividual, :CoffeeBeverage ;
+    rdfs:label "V60 Gayo Manual Brew" ;
+    :hasPrice 25000 ;
+    :servedBy :Kopikini ;
+    :brewedFrom :Lot_Gayo_Ateng ;
+    :hasIngredient :Water, :GayoCoffeeBeans ;
+    :hasFlavorNote :Fruity, :Acidic, :Spice ;
+    :brewingTemp 92 ; :brewingTime "2:30 min" ; :waterRatio "1:15" ;
+    rdfs:comment "Seduhan manual pour-over menonjolkan rasa buah." .
+
+:ButterscotchLatte rdf:type owl:NamedIndividual, :CoffeeBeverage ;
+    rdfs:label "Butterscotch Sea Salt Latte" ;
+    :hasPrice 28000 ;
+    :servedBy :ForeCoffee ;
+    :brewedFrom :HouseBlend_Fore ;
+    :hasIngredient :EspressoShot, :FreshMilk, :ButterscotchSyrup, :Cream ;
+    :hasFlavorNote :Sweet, :Buttery ;
+    :brewingTemp 92 ; :brewingTime "30 sec" ; :waterRatio "1:2" ;
+    rdfs:comment "Kopi creamy dengan rasa mentega karamel yang gurih." .
+
+:IcedAmericano rdf:type owl:NamedIndividual, :CoffeeBeverage ;
+    rdfs:label "Iced Americano" ;
+    :hasPrice 15000 ;
+    :servedBy :ColdNBrew ;
+    :brewedFrom :HouseBlend_ColdNBrew ;
+    :hasIngredient :EspressoShot, :Water, :IceCube ;
+    :hasFlavorNote :Bitter, :Clean ;
+    :brewingTemp 94 ; :brewingTime "25 sec" ; :waterRatio "1:15" ;
+    rdfs:comment "Espresso segar dituang di atas es batu dan air." .
+
+:HotCappuccino rdf:type owl:NamedIndividual, :CoffeeBeverage ;
+    rdfs:label "Hot Cappuccino" ;
+    :hasPrice 22000 ;
+    :servedBy :StarbucksID ;
+    :brewedFrom :Espresso_Roast_SBux ;
+    :hasIngredient :EspressoShot, :FreshMilk ;
+    :hasFlavorNote :Creamy, :Bold ;
+    :brewingTemp 93 ; :brewingTime "28 sec" ; :waterRatio "1:2" ;
+    rdfs:comment "Kopi susu panas dengan foam tebal yang lembut." .
+
+:PandanLatte rdf:type owl:NamedIndividual, :CoffeeBeverage ;
+    rdfs:label "Pandan Latte" ;
+    :hasPrice 29000 ;
+    :servedBy :ForeCoffee ;
+    :brewedFrom :HouseBlend_Fore ;
+    :hasIngredient :EspressoShot, :FreshMilk, :PandanSyrup ;
+    :hasFlavorNote :Sweet, :Floral ;
+    :brewingTemp 92 ; :brewingTime "28 sec" ; :waterRatio "1:2" ;
+    rdfs:comment "Kopi susu dengan aroma pandan nusantara yang wangi." .
+
+:CaramelMacchiato rdf:type owl:NamedIndividual, :CoffeeBeverage ;
+    rdfs:label "Caramel Macchiato" ;
+    :hasPrice 38000 ;
+    :servedBy :StarbucksID ;
+    :brewedFrom :Espresso_Roast_SBux ;
+    :hasIngredient :EspressoShot, :FreshMilk, :VanillaSyrup ;
+    :hasFlavorNote :Sweet, :Creamy ;
+    :brewingTemp 93 ; :brewingTime "25 sec" ; :waterRatio "1:2" ;
+    rdfs:comment "Susu vanilla dengan espresso dan saus karamel di atasnya." .
