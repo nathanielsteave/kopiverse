@@ -6,14 +6,10 @@ app = Flask(__name__)
 # ==========================================
 # KONFIGURASI FUSEKI
 # ==========================================
-# Pastikan nama dataset di URL ini sesuai dengan yang ada di Fuseki Anda
 FUSEKI_ENDPOINT = "http://localhost:3030/kopiverse/query"
 
 def get_sparql_results(query):
-    """
-    Helper function untuk mengirim query ke Fuseki
-    dan menangani potensi error koneksi.
-    """
+    """Mengirim query ke Fuseki dan menangani error koneksi."""
     sparql = SPARQLWrapper(FUSEKI_ENDPOINT)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
@@ -25,10 +21,7 @@ def get_sparql_results(query):
         return []
 
 def get_filters():
-    """
-    Mengambil daftar Origin dan Process unik dari Ontology 
-    untuk mengisi Dropdown Filter secara dinamis.
-    """
+    """Mengambil daftar Origin dan Process unik untuk Dropdown Filter."""
     q_origin = """
     PREFIX : <http://kopiverse.org/ontology#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -48,32 +41,29 @@ def get_filters():
     processes = [r["label"]["value"] for r in get_sparql_results(q_process)]
     return origins, processes
 
-# ==========================================
-# 1. ROUTE LANDING PAGE
-# ==========================================
 @app.route('/')
 def welcome():
     return render_template('index.html')
 
-# ==========================================
-# 2. ROUTE DASHBOARD (CONTROLLER UTAMA)
-# ==========================================
 @app.route('/role/<role_name>')
 def role_dashboard(role_name):
     data = []
+    stats = {}  # Variabel untuk KPI Roaster
     page_title = ""
     
-    # Ambil Parameter Filter dari URL
+    # --- AMBIL PARAMETER URL ---
     keyword = request.args.get('q', '').lower()
     filter_origin = request.args.get('origin', '')
     filter_process = request.args.get('process', '')
+    filter_vegan = request.args.get('vegan', '') # Parameter baru untuk Barista
     
-    # Ambil Data Dropdown untuk Filter
+    # Ambil Data Dropdown
     origins, processes = get_filters()
 
-    # --- BANGUN QUERY SPARQL DINAMIS ---
-    # Base Filter (Pencarian Teks)
+    # --- BANGUN QUERY FILTER DINAMIS ---
     sparql_filter = ""
+    
+    # 1. Filter Teks (Universal)
     if keyword:
         sparql_filter += f"""
         FILTER (
@@ -82,38 +72,32 @@ def role_dashboard(role_name):
             CONTAINS(LCASE(STR(?ingLabel)), "{keyword}")
         )
         """
-    # Faceted Filter (Origin & Process - Khusus Roaster/Petani)
+    
+    # 2. Filter Dropdown (Roaster & Petani)
     if filter_origin:
-        sparql_filter += f"""
-        ?lot :hasDerivedOrigin ?oFilter . ?oFilter rdfs:label "{filter_origin}" .
-        """
+        sparql_filter += f'?lot :hasDerivedOrigin ?oFilter . ?oFilter rdfs:label "{filter_origin}" .'
     if filter_process and role_name in ['roaster', 'petani']:
-        sparql_filter += f"""
-        ?lot :processedWith ?pFilter . ?pFilter rdfs:label "{filter_process}" .
-        """
+        sparql_filter += f'?lot :processedWith ?pFilter . ?pFilter rdfs:label "{filter_process}" .'
 
     # -------------------------------------------------------
-    # LOGIKA 1: PETANI (Etalase Kebun)
+    # LOGIKA 1: PETANI
     # -------------------------------------------------------
     if role_name == 'petani':
-        page_title = "Dashboard Petani"
+        page_title = "Dashboard Petani: Etalase Kebun"
         
         query = f"""
         PREFIX : <http://kopiverse.org/ontology#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        
         SELECT ?lot ?nama ?harga ?panen ?organik ?score
                (GROUP_CONCAT(DISTINCT ?flavorLabel; separator=", ") AS ?flavors)
         WHERE {{
             ?lot a :CoffeeLot ; rdfs:label ?nama ; :hasPrice ?harga .
-            
             OPTIONAL {{ ?lot :hasHarvestDate ?panen }}
             OPTIONAL {{ ?lot :isOrganic ?organik }}
             OPTIONAL {{ ?lot :hasCuppingScore ?score }}
             OPTIONAL {{ ?lot :hasFlavorNote ?f . ?f rdfs:label ?flavorLabel }}
-            OPTIONAL {{ ?lot :hasDerivedOrigin ?o . }} # Join untuk filter origin
-            OPTIONAL {{ ?lot :processedWith ?p . }}    # Join untuk filter process
-            
+            OPTIONAL {{ ?lot :hasDerivedOrigin ?o . }} 
+            OPTIONAL {{ ?lot :processedWith ?p . }}    
             {sparql_filter}
         }}
         GROUP BY ?lot ?nama ?harga ?panen ?organik ?score
@@ -135,19 +119,19 @@ def role_dashboard(role_name):
                 "detail_1": f"📅 Panen: {r.get('panen', {}).get('value', '-')}",
                 "detail_2": f"🌱 Status: {'Organik' if r.get('organik', {}).get('value') == 'true' else 'Konvensional'}",
                 "badges": flavors,
-                "shop": None, "base_coffee": None, "specs": {} # Dummy
+                "shop": None, "base_coffee": None, "specs": {}
             })
 
     # -------------------------------------------------------
-    # LOGIKA 2: ROASTER (Professional Lab & Profiling)
+    # LOGIKA 2: ROASTER (Lengkap dengan KPI Bisnis)
     # -------------------------------------------------------
     elif role_name == 'roaster':
-        page_title = "Dashboard Roaster"
+        page_title = "Dashboard Roaster: Sourcing & Profiling"
         
+        # A. Query Data Utama
         query = f"""
         PREFIX : <http://kopiverse.org/ontology#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        
         SELECT ?lot ?nama ?moisture ?density ?profile ?origin ?price ?processName ?score
                ?screen ?aw ?stock ?crop ?defect ?agtron ?firstCrack ?dtr ?grade ?packaging
                ?ferm ?acid ?body ?shrink ?rest
@@ -155,8 +139,6 @@ def role_dashboard(role_name):
                (GROUP_CONCAT(DISTINCT ?certLabel; separator=", ") AS ?certs)
         WHERE {{
             ?lot a :CoffeeLot ; rdfs:label ?nama ; :hasDerivedOrigin ?o . ?o rdfs:label ?origin .
-            
-            # Basic Data
             OPTIONAL {{ ?lot :hasPrice ?price }}
             OPTIONAL {{ ?lot :hasMoistureContent ?moisture }}
             OPTIONAL {{ ?lot :hasBeanDensity ?density }}
@@ -165,7 +147,7 @@ def role_dashboard(role_name):
             OPTIONAL {{ ?lot :hasCuppingScore ?score }}
             OPTIONAL {{ ?lot :hasFlavorNote ?f . ?f rdfs:label ?flavorLabel }}
             
-            # Green Bean Specs
+            # Specs Lengkap
             OPTIONAL {{ ?lot :hasScreenSize ?screen }}
             OPTIONAL {{ ?lot :hasWaterActivity ?aw }}
             OPTIONAL {{ ?lot :hasStockKg ?stock }}
@@ -173,15 +155,11 @@ def role_dashboard(role_name):
             OPTIONAL {{ ?lot :hasDefectCount ?defect }}
             OPTIONAL {{ ?lot :hasBeanGrade ?grade }}
             OPTIONAL {{ ?lot :packagingType ?packaging }}
-
-            # Roast Specs
             OPTIONAL {{ ?lot :hasAgtronNumber ?agtron }}
             OPTIONAL {{ ?lot :hasFirstCrackTemp ?firstCrack }}
             OPTIONAL {{ ?lot :recommendedDTR ?dtr }}
             OPTIONAL {{ ?lot :hasShrinkage ?shrink }}
             OPTIONAL {{ ?lot :restingDays ?rest }}
-            
-            # Sensory Specs
             OPTIONAL {{ ?lot :fermentationHours ?ferm }}
             OPTIONAL {{ ?lot :acidityLevel ?acid }}
             OPTIONAL {{ ?lot :bodyLevel ?body }}
@@ -220,7 +198,6 @@ def role_dashboard(role_name):
                 "stock_status": stock_status,
                 "detail_1": f"⚙️ {proc_name}",  
                 "detail_2": f"🔥 {prof_name}",
-                
                 "specs": {
                     "moisture": r.get("moisture", {}).get("value"),
                     "aw": r.get("aw", {}).get("value"),
@@ -229,14 +206,11 @@ def role_dashboard(role_name):
                     "screen": r.get("screen", {}).get("value"),
                     "grade": r.get("grade", {}).get("value"),
                     "packaging": r.get("packaging", {}).get("value"),
-                    
                     "agtron": r.get("agtron", {}).get("value"),
                     "first_crack": r.get("firstCrack", {}).get("value"),
                     "dtr": r.get("dtr", {}).get("value"),
-                    
                     "shrink": r.get("shrink", {}).get("value"),
                     "rest": r.get("rest", {}).get("value"),
-                    
                     "ferm": r.get("ferm", {}).get("value"),
                     "acid": r.get("acid", {}).get("value"),
                     "body": r.get("body", {}).get("value"),
@@ -247,20 +221,40 @@ def role_dashboard(role_name):
                 "shop": None, "base_coffee": None
             })
 
+        # B. Query KPI / Statistik Bisnis (FITUR TAMBAHAN)
+        query_stats = """
+        PREFIX : <http://kopiverse.org/ontology#>
+        SELECT (SUM(?totalVal) AS ?grandTotal) (SUM(?stok) AS ?totalStock)
+        WHERE {
+            SELECT ?lot ?stok ?harga ((?stok * ?harga) AS ?totalVal)
+            WHERE {
+                ?lot a :CoffeeLot ; :hasStockKg ?stok ; :hasPrice ?harga .
+            }
+        }
+        """
+        res_stats = get_sparql_results(query_stats)
+        if res_stats:
+            try:
+                val = float(res_stats[0].get("grandTotal", {}).get("value", 0))
+                kg = int(res_stats[0].get("totalStock", {}).get("value", 0))
+                stats = {
+                    "total_asset": f"Rp {val:,.0f}",
+                    "total_kg": f"{kg} Kg"
+                }
+            except: pass
+
     # -------------------------------------------------------
-    # LOGIKA 3: BARISTA (Menu & Resep)
+    # LOGIKA 3: BARISTA (Lengkap dengan Filter Vegan)
     # -------------------------------------------------------
     elif role_name == 'barista':
         page_title = "Barista: Brewing Guide"
         
-        # Filter Pencarian khusus Barista
-        if keyword:
-            sparql_filter = f"""
-            FILTER (
-                CONTAINS(LCASE(STR(?nama)), "{keyword}") || 
-                CONTAINS(LCASE(STR(?ingLabel)), "{keyword}") ||
-                CONTAINS(LCASE(STR(?flavorLabel)), "{keyword}")
-            )
+        # Filter Vegan Logic
+        if filter_vegan == '1':
+            sparql_filter += """
+            FILTER NOT EXISTS { ?bev :hasIngredient :FreshMilk }
+            FILTER NOT EXISTS { ?bev :hasIngredient :Cream }
+            FILTER NOT EXISTS { ?bev :hasIngredient :CondensedMilk }
             """
         
         query = f"""
@@ -276,19 +270,16 @@ def role_dashboard(role_name):
             OPTIONAL {{ ?bev :hasPrice ?price }}
             OPTIONAL {{ ?bev rdfs:comment ?desc }}
             OPTIONAL {{ ?bev :servedBy ?shop . ?shop rdfs:label ?shopName }}
-
             OPTIONAL {{ 
                 ?bev :brewedFrom ?base . 
                 BIND(COALESCE(?baseLabelRaw, STRAFTER(STR(?base), "#")) AS ?baseName)
                 OPTIONAL {{ ?base rdfs:label ?baseLabelRaw }}
             }}
-            
             OPTIONAL {{ 
                 ?bev :hasIngredient ?ing . 
                 BIND(COALESCE(?ingLabelRaw, STRAFTER(STR(?ing), "#")) AS ?ingLabel)
                 OPTIONAL {{ ?ing rdfs:label ?ingLabelRaw }}
             }}
-            
             OPTIONAL {{ ?bev :hasFlavorNote ?f . ?f rdfs:label ?flavorLabel }}
             OPTIONAL {{ ?bev :brewingTemp ?temp }}
             OPTIONAL {{ ?bev :brewingTime ?time }}
@@ -323,18 +314,20 @@ def role_dashboard(role_name):
                 },
                 "ingredients": ing,
                 "badges": flav,
-                # Field dummy agar template aman
                 "highlight": "", "detail_1": "", "detail_2": ""
             })
 
+    # Render template dengan semua variabel
     return render_template('role_view.html', 
-                           data=data, title=page_title, role=role_name, 
+                           data=data, stats=stats, # Kirim stats untuk Roaster
+                           title=page_title, role=role_name, 
                            search_query=keyword, 
                            origins=origins, processes=processes, 
-                           sel_origin=filter_origin, sel_process=filter_process)
+                           sel_origin=filter_origin, sel_process=filter_process,
+                           sel_vegan=filter_vegan) # Kirim status vegan
 
 # ==========================================
-# 3. ROUTE DETAIL HALAMAN (Deep Dive & Rekomendasi)
+# 3. ROUTE DETAIL HALAMAN
 # ==========================================
 @app.route('/detail/<path:product_id>')
 def detail_page(product_id):
@@ -375,7 +368,7 @@ def detail_page(product_id):
     if not results: return "Data not found"
     r = results[0]
 
-    # --- FITUR REKOMENDASI (Produk Serupa) ---
+    # --- REKOMENDASI PRODUK ---
     recommendations = []
     origin_uri = r.get("originURI", {}).get("value")
     

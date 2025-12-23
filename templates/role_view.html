@@ -173,14 +173,35 @@
 
 <div class="container pb-5">
 
+    {% if role == 'roaster' and stats %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="p-3 bg-primary bg-opacity-10 border border-primary rounded-3 text-center h-100">
+                        <small class="text-uppercase fw-bold text-primary" style="letter-spacing: 1px;">Total Aset Gudang</small>
+                        <h2 class="fw-bold mb-0 text-primary-emphasis mt-2">{{ stats.total_asset }}</h2>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 bg-success bg-opacity-10 border border-success rounded-3 text-center h-100">
+                        <small class="text-uppercase fw-bold text-success" style="letter-spacing: 1px;">Total Stok Fisik</small>
+                        <h2 class="fw-bold mb-0 text-success-emphasis mt-2">{{ stats.total_kg }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="filter-card">
                 <form action="/role/{{ role }}" method="get" class="row g-2 align-items-center">
                     
-                    <div class="col-md-{{ '4' if role in ['roaster', 'petani'] else '10' }}">
+                    <div class="col-md-{{ '4' if role in ['roaster', 'petani'] else '7' }}">
                         <input type="text" name="q" class="form-control border-secondary-subtle" 
-                               placeholder="Cari..." value="{{ search_query }}">
+                               placeholder="Cari nama, rasa..." value="{{ search_query }}">
                     </div>
                     
                     {% if role in ['roaster', 'petani'] %}
@@ -202,12 +223,25 @@
                     </div>
                     {% endif %}
 
+                    {% if role == 'barista' %}
+                    <div class="col-md-3 d-flex align-items-center">
+                        <div class="form-check form-switch p-2 bg-light border rounded w-100 d-flex align-items-center justify-content-center">
+                            <input class="form-check-input me-2" type="checkbox" name="vegan" value="1" id="veganCheck" 
+                                   {% if sel_vegan == '1' %}checked{% endif %} 
+                                   onchange="this.form.submit()" style="cursor: pointer;">
+                            <label class="form-check-label fw-bold small text-success cursor-pointer" for="veganCheck" style="cursor: pointer;">
+                                🌱 Vegan Only
+                            </label>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-dark w-100 fw-bold">Filter</button>
                     </div>
                 </form>
                 
-                {% if search_query or sel_origin or sel_process %}
+                {% if search_query or sel_origin or sel_process or sel_vegan %}
                     <div class="text-center mt-3 border-top pt-2">
                         <a href="/role/{{ role }}" class="text-danger small fw-bold text-decoration-none">↺ Reset Filter</a>
                     </div>
